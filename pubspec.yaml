@@ -1,0 +1,19 @@
+name: cubos_extensions
+description: Cubos extensions
+version: 0.0.1
+author: Cubos Tecnologia 2020 - Danilo Rêgo <daniloapr@gmail.com>
+homepage: https://github.com/daniloapr/cubos_extensions
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
