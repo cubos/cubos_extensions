@@ -1,6 +1,6 @@
 # Cubos Extensions
 
-This is a helper library with some extensions we use in many Cubos' projects.
+Flutter package containing the most used extension functions in Cubos Tecnologia's projects.
 
 ## Features
 
