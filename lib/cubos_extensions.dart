@@ -5,7 +5,7 @@ extension CubosStringExtensions on String {
   String get cleanCpf => this.replaceAll('.', '').replaceAll('-', '').trim();
 
   /// Returns only numbers of a CEP string, removing all special characters.
-  String get cleanCep => this.replaceAll('-', '')..trim();
+  String get cleanCep => this.replaceAll('-', '').trim();
 
   /// Returns only numbers of a phone string, removing all special characters.
   String get cleanPhone => this
