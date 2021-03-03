@@ -5,13 +5,19 @@ extension CubosStringExtensions on String {
   String get cleanCpf => this.replaceAll('.', '').replaceAll('-', '').trim();
 
   /// Returns only numbers of a phone string, removing all special characters.
-  String get cleanPhone => this
-      .replaceAll('(', '')
-      .replaceAll(')', '')
-      .replaceAll('-', '')
-      .replaceAll(' ', '')
-      .replaceAll('+', '')
-      .trim();
+  /// Returns null for null values, and blank for blank vlaues
+  String get cleanPhone {
+    if (this == null) return null;
+    if (this.isNullOrBlank) return '';
+
+    return this
+        .replaceAll('(', '')
+        .replaceAll(')', '')
+        .replaceAll('-', '')
+        .replaceAll(' ', '')
+        .replaceAll('+', '')
+        .trim();
+  }
 
   /// Returns [true] is the string is a number.
   bool get isNumeric {

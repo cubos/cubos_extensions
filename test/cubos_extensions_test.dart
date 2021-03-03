@@ -26,6 +26,21 @@ main() {
 
         expect(result, '5581999999999');
       });
+
+      test('Should return null for null value', () {
+        final phone = null;
+        final result = phone?.cleanPhone;
+
+        expect(result, null);
+      });
+
+      test('Should return blank for blank value', () {
+        final result1 = ''.cleanPhone;
+        final result2 = ' '.cleanPhone;
+
+        expect(result1, '');
+        expect(result2, '');
+      });
     });
 
     group('String.isNumeric', () {
