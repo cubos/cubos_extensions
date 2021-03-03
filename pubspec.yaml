@@ -1,6 +1,6 @@
 name: cubos_extensions
 description: Flutter package containing the most used extension functions in Cubos Tecnologia's projects.
-version: 1.0.3
+version: 1.0.4
 homepage: https://github.com/daniloapr/cubos_extensions
 
 environment:
