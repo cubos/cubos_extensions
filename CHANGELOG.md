@@ -1,3 +1,5 @@
+## [1.1.0] - 2021-03-22.
+Feat: cleanCep
 ## [1.0.4] - 2021-03-02.
 Fix: cleanPhone for null returns must return null.
 ## [1.0.3] - 2020-12-04.
