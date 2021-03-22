@@ -6,6 +6,7 @@ Flutter package containing the most used extension functions in Cubos Tecnologia
 
 ### String Extensions
     cleanCpf
+    cleanCep
     cleanPhone
     cleanCep
     isNumeric
