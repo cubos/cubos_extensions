@@ -591,7 +591,7 @@ main() {
       test(
           'When used removeLastWhere on a fixed-length list should return a Unsupported Error',
           () {
-        final List<int> example = new List(2);
+        final List<int> example = new List.filled(2, 0);
         example[0] = 3;
         example[1] = 2;
 

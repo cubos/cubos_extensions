@@ -268,14 +268,17 @@ extension CubosListExtensions on List<dynamic> {
   int get lastIndex => this.length - 1;
 
   /// Returns new array which is a copy of the original array, resized to the given [newSize].
-  /// he copy is either truncated or padded at the end with zero values if necessary.
+  /// The copy is either truncated or padded at the end with zero values if necessary.
   ///
   /// - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
   /// - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
+  /// 
+  /// OBS: the new returns list is growable.
+  /// TO DO: return zero value fgr each list type. Ex: For strings, return "", for boolean return false...
   List<dynamic> copyOf(int newSize) {
     var copiedList = this;
     final copiedListLastIndex = copiedList.length - 1;
-    var newList = List(newSize);
+    var newList = List.filled(newSize, 0, growable: true);
 
     newList.asMap().forEach((index, it) {
       newList[index] = (index <= copiedListLastIndex) ? copiedList[index] : 0;
