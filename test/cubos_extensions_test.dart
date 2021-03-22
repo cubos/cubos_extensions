@@ -12,6 +12,15 @@ main() {
       });
     });
 
+    group('String.cleanCep', () {
+      test('Should transform 12345-678 into 12345678', () {
+        final cep = '12345-678';
+        final result = cep.cleanCep;
+
+        expect(result, '12345678');
+      });
+    });
+
     group('String.cleanPhone', () {
       test('Should transform (81) 99999-9999 into 81999999999', () {
         final phone = '(81) 99999-9999';
