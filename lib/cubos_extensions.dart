@@ -1,5 +1,7 @@
 library cubos_extensions;
 
+import 'constants.dart';
+
 extension CubosStringExtensions on String {
   /// Returns only numbers of a CPF string, removing all special characters('.' and '-')
   String get cleanCpf => this.replaceAll('.', '').replaceAll('-', '').trim();
@@ -15,25 +17,28 @@ extension CubosStringExtensions on String {
 
   /// Returns [true] is the string is a number.
   bool get isNumeric {
-    if (this == null) {
-      return false;
-    }
     return double.tryParse(this) != null;
   }
 
   /// Returns [true] if the String is null or blank.
-  bool get isNullOrBlank => this?.trim()?.isEmpty ?? true;
+  @Deprecated(
+    'This feature has been deprecated, this package has been updated to Flutter null safety version',
+  )
+  bool get isNullOrBlank => this.trim().isEmpty;
 
   /// Returns [true] if the String is NOT null or blank.
+  @Deprecated(
+    'This feature has been deprecated, this package has been updated to Flutter null safety version',
+  )
   bool get isNotNullOrBlank => !this.isNullOrBlank;
 
   /// Capitalize the first letter.
   String get capitalize {
-    if (this.isNullOrBlank) return this;
+    if (this.length > 1) {
+      return '${this[0].toUpperCase()}${this.substring(1)}';
+    }
 
-    return this.length > 1
-        ? '${this[0].toUpperCase()}${this.substring(1)}'
-        : this.toUpperCase();
+    return this.toUpperCase();
   }
 
   /// Returns given names with all the word capitalized, except some words such as: de, da, das, do,
@@ -41,7 +46,7 @@ extension CubosStringExtensions on String {
   ///
   /// Returns a empty string if the value is null or blank.
   String get capitalizeWords {
-    if (this.isNullOrBlank) {
+    if (this.isEmpty) {
       return '';
     }
     final str = this.toLowerCase().split(' ').map((word) {
@@ -53,7 +58,7 @@ extension CubosStringExtensions on String {
   }
 
   String get firstName {
-    if (this.isNullOrBlank) return '';
+    if (this.isEmpty) return '';
     return this.split(' ')[0].capitalize;
   }
 
@@ -67,39 +72,7 @@ extension CubosStringExtensions on String {
   /// Returns if a given string is a short string of brazil or brazilian states
   /// Ex: Returns true for: Br, br, BR, SP, ba, To.
   bool get isBrazilianCountryOrState {
-    final brazilAndStates = [
-      'AC',
-      'AL',
-      'AM',
-      'AP',
-      'BA',
-      'CE',
-      'DF',
-      'ES',
-      'GO',
-      'MA',
-      'MG',
-      'MG',
-      'MS',
-      'MT',
-      'PA',
-      'PB',
-      'PE',
-      'PI',
-      'PR',
-      'RJ',
-      'RN',
-      'RO',
-      'RR',
-      'RS',
-      'SC',
-      'SE',
-      'SP',
-      'TO',
-      'BR'
-    ];
-
-    return brazilAndStates.contains(this.toUpperCase());
+    return brazilAndStatesAbbreviated.contains(this.toUpperCase());
   }
 
   bool get hasUppercase => this.contains(new RegExp(r'[A-Z]'));
@@ -115,11 +88,11 @@ extension CubosStringExtensions on String {
 
   /// Converts dd/mm/yyyy String to Datetime.
   /// Returns null if the String is in the wrong format;
-  DateTime get toDateTime {
+  DateTime? get toDateTime {
     return DateTime.tryParse(this);
   }
 
-  int get toInt {
+  int? get toInt {
     return int.tryParse(this);
   }
 }
@@ -146,38 +119,6 @@ extension CubosDateTimeExtensions on DateTime {
     return DateTime(this.year - years, this.month, this.day);
   }
 
-  /// Returns the weekday in pt-br
-  ///
-  /// EX: Segunda-feira, Terça-feira...
-  String get toWeekdayStr {
-    final weekday = this.weekday;
-    switch (weekday) {
-      case DateTime.monday:
-        return 'Segunda-feira';
-        break;
-      case DateTime.tuesday:
-        return 'Terça-feira';
-        break;
-      case DateTime.wednesday:
-        return 'Quarta-feira';
-        break;
-      case DateTime.thursday:
-        return 'Quinta-feira';
-        break;
-      case DateTime.friday:
-        return 'Sexta-feira';
-        break;
-      case DateTime.saturday:
-        return 'Sábado';
-        break;
-      case DateTime.sunday:
-        return 'Domingo';
-        break;
-      default:
-        return '';
-    }
-  }
-
   /// Returns the time in HH:MM 24h format.
   String get toTimeStr {
     final hours = this.hour.toString().padLeft(2, '');
@@ -186,52 +127,30 @@ extension CubosDateTimeExtensions on DateTime {
     return '$hours:$minutes';
   }
 
+  /// Returns the weekday in pt-br
+  ///
+  /// EX: Segunda-feira, Terça-feira...
+  String toWeekdayStr([bool useSuffMarket = true]) {
+    final weekday = this.weekday;
+    final weekdayStr = weekDaysInPortuguesePtBR[weekday] ?? '';
+
+    return useSuffMarket ? weekdayStr : weekdayStr.replaceAll('-feira', '');
+  }
+
   /// Returns the month in pt-br
   ///
   /// Ex: Janeiro, Fevereiro...
   String get toMonthStr {
-    final month = this.month;
+    final month = monthsInPortuguesePtBR[this.month];
+    return month?['fullName'] ?? '';
+  }
 
-    switch (month) {
-      case DateTime.january:
-        return 'Janeiro';
-        break;
-      case DateTime.february:
-        return 'Fevereiro';
-        break;
-      case DateTime.march:
-        return 'Março';
-        break;
-      case DateTime.april:
-        return 'Abril';
-        break;
-      case DateTime.may:
-        return 'Maio';
-        break;
-      case DateTime.june:
-        return 'Junho';
-        break;
-      case DateTime.july:
-        return 'Julho';
-        break;
-      case DateTime.august:
-        return 'Agosto';
-        break;
-      case DateTime.september:
-        return 'Setembro';
-        break;
-      case DateTime.october:
-        return 'Outubro';
-        break;
-      case DateTime.november:
-        return 'Novembro';
-        break;
-      case DateTime.december:
-        return 'Dezembro';
-        break;
-      default:
-        return '';
-    }
+  /// Returns the month in pt-br
+  ///
+  /// Ex: Janeiro, Fevereiro...
+  String get toMonthAbbreviationStr {
+    final month = monthsInPortuguesePtBR[this.month];
+    return month?['shortName'] ?? '';
   }
 
   /// Returns the complete date and time in pt-br.
@@ -264,9 +183,9 @@ extension CubosListExtensions on List<dynamic> {
   /// - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
   /// - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
   List<dynamic> copyOf(int newSize) {
-    var copiedList = this;
+    final List<dynamic> copiedList = this;
     final copiedListLastIndex = copiedList.length - 1;
-    var newList = List(newSize);
+    final List<dynamic> newList = List.generate(newSize, (_) => []);
 
     newList.asMap().forEach((index, it) {
       newList[index] = (index <= copiedListLastIndex) ? copiedList[index] : 0;
@@ -288,28 +207,42 @@ extension CubosListExtensions on List<dynamic> {
     final lastIndex = this.length - 1;
 
     for (var i = lastIndex; i >= 0; i--) {
-      print(i);
       if (test(this[i])) {
         this.removeAt(i);
         break;
       }
     }
   }
+}
 
+extension CubosNullListExtensions on List<dynamic>? {
   /// Returns [true] if the list is null or empty. Returns false otherwhise.
   bool get isNullOrEmpty {
     return this?.isEmpty ?? true;
   }
 }
 
-extension CubosListIntExtensions on List<int> {
+extension CubosListIntExtensions on List<num> {
   ///Sum all values in a List<int>
-  int get sum {
-    var sum = 0;
-    this.forEach((int it) {
-      sum += it;
-    });
-    return sum;
+  int get integerSum {
+    if (this.isEmpty) {
+      return 0;
+    }
+
+    return this
+        .cast<int>()
+        .fold<int>(0, (previousValue, it) => it + previousValue);
+  }
+
+  ///Sum all values in a List<double>
+  double get floatSum {
+    if (this.isEmpty) {
+      return 0;
+    }
+
+    return this
+        .cast<double>()
+        .fold<double>(0.0, (previousValue, it) => it + previousValue);
   }
 }
 

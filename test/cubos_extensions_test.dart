@@ -1,3 +1,4 @@
+import 'package:cubos_extensions/constants.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cubos_extensions/cubos_extensions.dart';
 
@@ -48,52 +49,6 @@ main() {
         final result = example.isNumeric;
 
         expect(result, false);
-      });
-    });
-
-    group('String.isNullOrBlank', () {
-      test('Should return true if is a null value', () {
-        final String example = null;
-        final result = example.isNullOrBlank;
-
-        expect(result, true);
-      });
-
-      test('Should return true if is a blank string', () {
-        final example = ' ';
-        final result = example.isNullOrBlank;
-
-        expect(result, true);
-      });
-
-      test('Should return false if is not a blank string or null value', () {
-        final example = 'not a null value';
-        final result = example.isNullOrBlank;
-
-        expect(result, false);
-      });
-    });
-
-    group('String.isNotNullOrBlank', () {
-      test('Should return false if is a null value', () {
-        final String example = null;
-        final result = example.isNotNullOrBlank;
-
-        expect(result, false);
-      });
-
-      test('Should return false if if is a blank string', () {
-        final example = ' ';
-        final result = example.isNotNullOrBlank;
-
-        expect(result, false);
-      });
-
-      test('Should return true if is not a blank string or null value', () {
-        final example = 'not a null value';
-        final result = example.isNotNullOrBlank;
-
-        expect(result, true);
       });
     });
 
@@ -461,6 +416,40 @@ main() {
         expect(actual, expected);
       });
     });
+
+    group('DateTime.toMonthStr()', () {
+      test("Returns month name in April", () {
+        final input = DateTime(2020, 04, 12);
+        const expected = 'Abril';
+        final actual = input.toMonthStr;
+
+        expect(actual, expected);
+      });
+
+      test("Returns the abbreviated name of the month in April", () {
+        final input = DateTime(2020, 04, 12);
+        const expected = 'Abr';
+        final actual = input.toMonthAbbreviationStr;
+
+        expect(actual, expected);
+      });
+
+      test("Returns weekday using suffixe market", () {
+        final input = DateTime(2021, 10, 12);
+        final expected = weekDaysInPortuguesePtBR[2];
+        final actual = input.toWeekdayStr();
+
+        expect(actual, expected);
+      });
+
+      test("Returns weekday using suffixe market", () {
+        final input = DateTime(2021, 10, 12);
+        final expected = 'Terça';
+        final actual = input.toWeekdayStr(false);
+
+        expect(actual, expected);
+      });
+    });
   });
 
   group('ListExtensions', () {
@@ -567,9 +556,7 @@ main() {
       test(
           'When used removeLastWhere on a fixed-length list should return a Unsupported Error',
           () {
-        final List<int> example = new List(2);
-        example[0] = 3;
-        example[1] = 2;
+        final List<int> example = new List.unmodifiable([3, 1]);
 
         expect(() => example.removeLastWhere((element) => element == 3),
             throwsUnsupportedError);
@@ -579,7 +566,14 @@ main() {
     group('Sum', () {
       test('Should sum all elements on the list', () {
         List<int> example = [4, 6, 7, 0, 12];
-        final result = example.sum;
+        final result = example.integerSum;
+
+        expect(result, 29);
+      });
+
+      test('Should sum all elements on the list', () {
+        List<double> example = [4, 6, 7, 0, 12];
+        final result = example.floatSum;
 
         expect(result, 29);
       });
@@ -587,7 +581,7 @@ main() {
 
     group('List.isNullOrEmpty', () {
       test('Returns true for null list', () {
-        final List<dynamic> input = null;
+        final List<dynamic>? input = null;
         final result = input.isNullOrEmpty;
         final expectedResult = true;
 
