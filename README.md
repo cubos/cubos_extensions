@@ -7,6 +7,7 @@ Flutter package containing the most used extension functions in Cubos Tecnologia
 ### String Extensions
     cleanCpf
     cleanPhone
+    cleanCep
     isNumeric
     isNullOrBlank
     isNotNullOrBlank
@@ -23,7 +24,6 @@ Flutter package containing the most used extension functions in Cubos Tecnologia
     toInt
 
 ### DateTime Extensions
-
     toDateTimeStr
     toIsoStr
     subtractYears
@@ -34,18 +34,15 @@ Flutter package containing the most used extension functions in Cubos Tecnologia
     toDateAndTimeStr
    
 ### List<dynamic> Extensions
-
     lastIndex
     copyOf
     removeLastWhere
     isNullOrEmpty
  
  ### List<int> Extensions
-
     sum
    
  ### Duration Extensions
-
     toTimeStr
 
 ## Let's grow together!
