@@ -1,6 +1,5 @@
-import 'package:cubos_extensions/constants.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:cubos_extensions/cubos_extensions.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 main() {
   group('StringExtensions', () {
@@ -436,16 +435,24 @@ main() {
 
       test("Returns weekday using suffixe market", () {
         final input = DateTime(2021, 10, 12);
-        final expected = weekDaysInPortuguesePtBR[2];
+        final expected = 'Terça-feira';
         final actual = input.toWeekdayStr();
+
+        expect(actual, expected);
+      });
+
+      test("Returns weekday not using suffixe market", () {
+        final input = DateTime(2021, 10, 12);
+        final expected = 'Terça';
+        final actual = input.toWeekdayStr(false);
 
         expect(actual, expected);
       });
 
       test("Returns weekday using suffixe market", () {
         final input = DateTime(2021, 10, 12);
-        final expected = 'Terça';
-        final actual = input.toWeekdayStr(false);
+        final expected = 'Ter';
+        final actual = input.toWeekdayAbbreviationStr;
 
         expect(actual, expected);
       });
@@ -615,6 +622,41 @@ main() {
 
         expect(actual, expected);
       });
+    });
+  });
+
+  group('NumberExtension', () {
+    test("Returns R\$ 25.12", () {
+      final input = 2512;
+      final expected = 'R\$ 25.12';
+      final actual = input.byRealWithSimbol();
+
+      expect(actual, expected);
+    });
+
+    test("Returns 25.12", () {
+      final input = 2512;
+      final expected = 25.12;
+      final actual = input.byReal();
+
+      expect(actual, expected);
+    });
+
+    test("Returns 2512", () {
+      final input = 25.12;
+      final expected = 2512;
+      final actual = input.byCents();
+
+      expect(actual, expected);
+    });
+  });
+
+  group('String.formatterZipCode', () {
+    test('Should transform 45810000 into 45.810-000', () {
+      final cpf = '45810000';
+      final result = cpf.formatterZipCode;
+
+      expect(result, '45.810-000');
     });
   });
 }

@@ -1,10 +1,35 @@
 library cubos_extensions;
 
+import 'package:flutter/material.dart';
 import 'constants.dart';
+
+extension ContextExtensions on BuildContext {
+  /// Returns screen's height
+  double get screenHeight => MediaQuery.of(this).size.height;
+
+  /// Returns screen's width
+  double get screenWidth => MediaQuery.of(this).size.width;
+
+  /// Returns screen [Size], containing width and height
+  Size get screenSize => MediaQuery.of(this).size;
+
+  // Returns true, if the device is mobile
+  bool isMobile([double maxWidth = 360]) => screenWidth < maxWidth;
+
+  // Returns true, if the device is tablet
+  bool isTablet([double minWidth = 360, double maxWidth = 840]) =>
+      screenWidth >= 840 && screenWidth < maxWidth;
+
+  // Returns true, if the device is desktop
+  bool isDesktop([double maxWidth = 1024]) => screenWidth >= maxWidth;
+}
 
 extension CubosStringExtensions on String {
   /// Returns only numbers of a CPF string, removing all special characters('.' and '-')
   String get cleanCpf => this.replaceAll('.', '').replaceAll('-', '').trim();
+
+  /// Returns only numbers of a ZIPCODE string, removing all special characters('.' and '-')
+  String get cleanZipCode => this.cleanCpf;
 
   /// Returns only numbers of a phone string, removing all special characters.
   String get cleanPhone => this
@@ -95,6 +120,28 @@ extension CubosStringExtensions on String {
   int? get toInt {
     return int.tryParse(this);
   }
+
+  String get formatterZipCode {
+    if (this.isEmpty) {
+      return '';
+    }
+
+    if (this.length < 8) {
+      return this;
+    }
+
+    final zipCode = this.cleanZipCode;
+
+    final firstDigits = zipCode.substring(0, 2);
+    final secondDigits = zipCode.substring(2, 5);
+    final thirdDigits = zipCode.substring(5, 8);
+
+    return '$firstDigits.$secondDigits-$thirdDigits';
+  }
+
+  List<Map<String, String>> get getBrazilianStates {
+    return brazilianStates;
+  }
 }
 
 /// Returns date String in dd/mm/yyyy format.
@@ -127,14 +174,33 @@ extension CubosDateTimeExtensions on DateTime {
     return '$hours:$minutes';
   }
 
+  /// Returns the time in HH:MM 24h format.
+  String get toHourAbbreStr {
+    final hour = this.hour.toString().padLeft(2, '0');
+    final min = minute.toString().padLeft(2, '0');
+
+    return '${hour}h$min';
+  }
+
   /// Returns the weekday in pt-br
   ///
   /// EX: Segunda-feira, Terça-feira...
   String toWeekdayStr([bool useSuffMarket = true]) {
-    final weekday = this.weekday;
-    final weekdayStr = weekDaysInPortuguesePtBR[weekday] ?? '';
+    final weekday = weekDaysInPortuguesePtBR[this.weekday];
+    if (weekday == null) return '';
 
+    final weekdayStr = weekday['fullName'] ?? '';
     return useSuffMarket ? weekdayStr : weekdayStr.replaceAll('-feira', '');
+  }
+
+  /// Returns the weekday abbreviated in pt-br
+  ///
+  /// EX: Seg, Ter, Quar...
+  String get toWeekdayAbbreviationStr {
+    final weekday = weekDaysInPortuguesePtBR[this.weekday];
+    if (weekday == null) return '';
+
+    return weekday['shortName'] ?? '';
   }
 
   /// Returns the month in pt-br
@@ -151,6 +217,16 @@ extension CubosDateTimeExtensions on DateTime {
   String get toMonthAbbreviationStr {
     final month = monthsInPortuguesePtBR[this.month];
     return month?['shortName'] ?? '';
+  }
+
+  /// Returns abbreviation date  in pt-br.
+  ///
+  /// Ex: 12 de abril
+  String get toMonthAndDay {
+    final month = toMonthStr;
+    final day = this.day.toString().padLeft(2, '0');
+
+    return '$day de $month';
   }
 
   /// Returns the complete date and time in pt-br.
@@ -256,5 +332,27 @@ extension CubosDurationExtentions on Duration {
     final secondsStr = seconds.toString().padLeft(2, '0');
 
     return '$minutes:$secondsStr';
+  }
+}
+
+extension NumberExtension on num {
+  double toPrecision(int precision) {
+    return double.parse((this).toStringAsFixed(precision));
+  }
+
+  int byCents() {
+    return (this * 100).truncate();
+  }
+
+  double byRealToPrecision() {
+    return (this / 100).toPrecision(2);
+  }
+
+  double byReal() {
+    return (this / 100);
+  }
+
+  String byRealWithSimbol() {
+    return 'R\$ ${this.byReal()}';
   }
 }
