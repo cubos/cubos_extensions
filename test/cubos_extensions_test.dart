@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:cubos_extensions/cubos_extensions.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 main() {
   group('StringExtensions', () {
@@ -9,15 +9,6 @@ main() {
         final result = cpf.cleanCpf;
 
         expect(result, '12345678900');
-      });
-    });
-
-    group('String.cleanCep', () {
-      test('Should transform 12345-678 into 12345678', () {
-        final cep = '12345-678';
-        final result = cep.cleanCep;
-
-        expect(result, '12345678');
       });
     });
 
@@ -34,21 +25,6 @@ main() {
         final result = phone.cleanPhone;
 
         expect(result, '5581999999999');
-      });
-
-      test('Should return null for null value', () {
-        final phone = null;
-        final result = phone?.cleanPhone;
-
-        expect(result, null);
-      });
-
-      test('Should return blank for blank value', () {
-        final result1 = ''.cleanPhone;
-        final result2 = ' '.cleanPhone;
-
-        expect(result1, '');
-        expect(result2, '');
       });
     });
 
@@ -72,52 +48,6 @@ main() {
         final result = example.isNumeric;
 
         expect(result, false);
-      });
-    });
-
-    group('String.isNullOrBlank', () {
-      test('Should return true if is a null value', () {
-        final String example = null;
-        final result = example.isNullOrBlank;
-
-        expect(result, true);
-      });
-
-      test('Should return true if is a blank string', () {
-        final example = ' ';
-        final result = example.isNullOrBlank;
-
-        expect(result, true);
-      });
-
-      test('Should return false if is not a blank string or null value', () {
-        final example = 'not a null value';
-        final result = example.isNullOrBlank;
-
-        expect(result, false);
-      });
-    });
-
-    group('String.isNotNullOrBlank', () {
-      test('Should return false if is a null value', () {
-        final String example = null;
-        final result = example.isNotNullOrBlank;
-
-        expect(result, false);
-      });
-
-      test('Should return false if if is a blank string', () {
-        final example = ' ';
-        final result = example.isNotNullOrBlank;
-
-        expect(result, false);
-      });
-
-      test('Should return true if is not a blank string or null value', () {
-        final example = 'not a null value';
-        final result = example.isNotNullOrBlank;
-
-        expect(result, true);
       });
     });
 
@@ -485,6 +415,48 @@ main() {
         expect(actual, expected);
       });
     });
+
+    group('DateTime.toMonthStr()', () {
+      test("Returns month name in April", () {
+        final input = DateTime(2020, 04, 12);
+        const expected = 'Abril';
+        final actual = input.toMonthStr;
+
+        expect(actual, expected);
+      });
+
+      test("Returns the abbreviated name of the month in April", () {
+        final input = DateTime(2020, 04, 12);
+        const expected = 'Abr';
+        final actual = input.toMonthAbbreviationStr;
+
+        expect(actual, expected);
+      });
+
+      test("Returns weekday using suffixe market", () {
+        final input = DateTime(2021, 10, 12);
+        final expected = 'Terça-feira';
+        final actual = input.toWeekdayStr();
+
+        expect(actual, expected);
+      });
+
+      test("Returns weekday not using suffixe market", () {
+        final input = DateTime(2021, 10, 12);
+        final expected = 'Terça';
+        final actual = input.toWeekdayStr(false);
+
+        expect(actual, expected);
+      });
+
+      test("Returns weekday using suffixe market", () {
+        final input = DateTime(2021, 10, 12);
+        final expected = 'Ter';
+        final actual = input.toWeekdayAbbreviationStr;
+
+        expect(actual, expected);
+      });
+    });
   });
 
   group('ListExtensions', () {
@@ -591,9 +563,7 @@ main() {
       test(
           'When used removeLastWhere on a fixed-length list should return a Unsupported Error',
           () {
-        final List<int> example = new List.filled(2, 0);
-        example[0] = 3;
-        example[1] = 2;
+        final List<int> example = new List.unmodifiable([3, 1]);
 
         expect(() => example.removeLastWhere((element) => element == 3),
             throwsUnsupportedError);
@@ -603,7 +573,14 @@ main() {
     group('Sum', () {
       test('Should sum all elements on the list', () {
         List<int> example = [4, 6, 7, 0, 12];
-        final result = example.sum;
+        final result = example.integerSum;
+
+        expect(result, 29);
+      });
+
+      test('Should sum all elements on the list', () {
+        List<double> example = [4, 6, 7, 0, 12];
+        final result = example.floatSum;
 
         expect(result, 29);
       });
@@ -611,7 +588,7 @@ main() {
 
     group('List.isNullOrEmpty', () {
       test('Returns true for null list', () {
-        final List<dynamic> input = null;
+        final List<dynamic>? input = null;
         final result = input.isNullOrEmpty;
         final expectedResult = true;
 
@@ -645,6 +622,41 @@ main() {
 
         expect(actual, expected);
       });
+    });
+  });
+
+  group('NumberExtension', () {
+    test("Returns R\$ 25.12", () {
+      final input = 2512;
+      final expected = 'R\$ 25.12';
+      final actual = input.byRealWithSimbol();
+
+      expect(actual, expected);
+    });
+
+    test("Returns 25.12", () {
+      final input = 2512;
+      final expected = 25.12;
+      final actual = input.byReal();
+
+      expect(actual, expected);
+    });
+
+    test("Returns 2512", () {
+      final input = 25.12;
+      final expected = 2512;
+      final actual = input.byCents();
+
+      expect(actual, expected);
+    });
+  });
+
+  group('String.formatterZipCode', () {
+    test('Should transform 45810000 into 45.810-000', () {
+      final cpf = '45810000';
+      final result = cpf.formatterZipCode;
+
+      expect(result, '45.810-000');
     });
   });
 }
