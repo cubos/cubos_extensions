@@ -1,4 +1,4 @@
-## [1.2.0] - 2020-10-11.
+## [1.4.0] - 2020-10-11.
 
 Migration release for null safety, containing new functions in extensions along with their respective unit tests.
 
