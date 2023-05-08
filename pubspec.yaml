@@ -1,18 +1,24 @@
-name: cubos_extensions
-description: Flutter package containing the most used extension functions in Cubos Tecnologia's projects.
-version: 1.4.0
-homepage: https://github.com/daniloapr/cubos_extensions
+name: rubik_utils
+description: RubikUtils is a collection of utilities for project Flutter.
+
+version: 1.0.0
+
+homepage: https://git.cubos.io/cubos/flutter-packages/rubik_utils
 
 environment:
-  sdk: ">=2.13.0 <3.0.0"
+  sdk: '>=2.19.2 <3.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  
+  intl: ^0.18.0
+  string_validator: ^1.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-flutter:
+  flutter_lints: ^2.0.0
+  dart_code_metrics: ^5.6.0
