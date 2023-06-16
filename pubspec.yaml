@@ -6,7 +6,7 @@ version: 1.0.0
 homepage: https://git.cubos.io/cubos/flutter-packages/rubik_utils
 
 environment:
-  sdk: '>=2.19.2 <3.0.0'
+  sdk: '>=2.19.2 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
