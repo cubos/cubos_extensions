@@ -13,6 +13,7 @@ import '../../extensions/object_extensions.dart';
 /// ```
 /// {@end-tool}
 typedef RubikCallbackAction<T, R> = R? Function(T);
+typedef RubikActionEvent = void Function(String, Object?);
 
 /// The `RubikFieldAction` an class  abstract class representing an action that can be executed on a field.
 /// It has two generic type parameters, `T` and `R`,
@@ -31,6 +32,7 @@ typedef RubikCallbackAction<T, R> = R? Function(T);
 /// ```
 /// {@end-tool}
 abstract class RubikFieldAction<T, R> {
+  String get key;
   R execute(T value);
 }
 
@@ -52,8 +54,11 @@ abstract class RubikFieldAction<T, R> {
 /// ```
 /// {@end-tool}
 class RubikValidationAction<T> implements RubikFieldAction<T, String?> {
+  @override
+  final String key;
+
   final RubikCallbackAction<T, String> validator;
-  const RubikValidationAction(this.validator);
+  const RubikValidationAction(this.validator, this.key);
 
   @override
   String? execute(T value) => validator.call(value);
@@ -77,8 +82,11 @@ class RubikValidationAction<T> implements RubikFieldAction<T, String?> {
 /// ```
 /// {@end-tool}
 class RubikTransformAction<T, R> implements RubikFieldAction<T, R?> {
+  @override
+  final String key;
+
   final RubikCallbackAction<T, R> transform;
-  const RubikTransformAction(this.transform);
+  const RubikTransformAction(this.transform, this.key);
 
   @override
   R? execute(T value) => transform.call(value);
@@ -134,8 +142,11 @@ abstract class RubikValidatorType {
   /// print(validator.validate('John Doe')); // returns null
   /// ```
   /// {@end-tool}
-  RubikValidatorType addValidate<T>(RubikCallbackAction<T, String?> value) {
-    _actions.add(RubikValidationAction<T>(value));
+  RubikValidatorType addValidate<T>({
+    required String key,
+    required RubikCallbackAction<T, String?> value,
+  }) {
+    _actions.add(RubikValidationAction<T>(value, key));
 
     return this;
   }
@@ -160,8 +171,14 @@ abstract class RubikValidatorType {
   /// print(validator.validate('John Doe')); // returns 'This field must be a number'
   /// ```
   /// {@end-tool}
-  RubikValidatorType transform<T, R>(RubikCallbackAction<T, R?> value) {
-    _actions.add(RubikTransformAction<T, R>(value));
+  RubikValidatorType transform<T, R>(
+    RubikCallbackAction<T, R?> value, [
+    String? key,
+  ]) {
+    _actions.add(RubikTransformAction<T, R>(
+      value,
+      key ?? 'trasform_${value.hashCode}',
+    ));
 
     return this;
   }
@@ -180,17 +197,20 @@ abstract class RubikValidatorType {
   /// print(validator.validate(null)); // returns 'This field is required'
   /// ```
   /// {@end-tool}
-  RubikValidatorType required({String? message}) {
-    return addValidate((value) {
-      return value == null ||
-              (value is Map && value.isEmpty) ||
-              (value is Set && value.isEmpty) ||
-              (value is Iterable && value.isEmpty) ||
-              (value is List && value.isEmpty) ||
-              (value is String && value.trim().isEmpty)
-          ? message ?? 'Campo obrigatório'
-          : null;
-    });
+  RubikValidatorType required({String? key, String? message}) {
+    return addValidate(
+      key: key ?? 'required',
+      value: (value) {
+        return value == null ||
+                (value is Map && value.isEmpty) ||
+                (value is Set && value.isEmpty) ||
+                (value is Iterable && value.isEmpty) ||
+                (value is List && value.isEmpty) ||
+                (value is String && value.trim().isEmpty)
+            ? message ?? 'Campo obrigatório'
+            : null;
+      },
+    );
   }
 
   /// Adds a validation action that allows a null value.
@@ -207,8 +227,8 @@ abstract class RubikValidatorType {
   /// print(validator.validate(null)); // returns null
   /// ```
   /// {@end-tool}
-  RubikValidatorType optional({String? message}) {
-    return addValidate((value) => value.isNull ? null : message);
+  RubikValidatorType optional({String? key, String? message}) {
+    return addValidate(key: key ?? 'optional', value: (value) => null);
   }
 
   /// Adds a validation action that checks if the input value is an instance of
@@ -228,12 +248,15 @@ abstract class RubikValidatorType {
   /// print(validator.validate('John Doe')); // returns 'This field must be a number'
   /// ```
   /// {@end-tool}
-  RubikValidatorType types(List<Type> types, {String? message}) {
-    return addValidate((value) {
-      final isValid = types.contains(value.runtimeType);
+  RubikValidatorType types(List<Type> types, {String? key, String? message}) {
+    return addValidate(
+      key: 'types',
+      value: (value) {
+        final isValid = types.contains(value.runtimeType);
 
-      return isValid ? null : message ?? 'O tipo $value não é válido';
-    });
+        return isValid ? null : message ?? 'O tipo $value não é válido';
+      },
+    );
   }
 
   /// Adds a validation action that checks if the input value is equal to one of
@@ -252,14 +275,18 @@ abstract class RubikValidatorType {
   /// print(validator.validate('John Doe')); // returns 'This field must be a number'
   /// ```
   /// {@end-tool}
-  String? validate(Object? value) {
+  String? validate(Object? value, [RubikActionEvent? event]) {
     for (final action in _actions) {
       if (action.isInstanceOf<RubikTransformAction>()) {
         value = (action as RubikTransformAction).execute(value);
+        event?.call(action.key, value);
+
         continue;
       }
 
       final result = action.execute(value);
+      event?.call(action.key, result);
+
       if (result != null) return result;
     }
 
@@ -281,13 +308,16 @@ abstract class RubikValidatorType {
   /// print(schema.parse('John Doe')); // returns null
   /// ```
   /// {@end-tool}
-  TResult? parse<TInput extends Object, TResult extends Object>(TInput? value) {
+  ({TResult? result, String? error})
+      parse<TInput extends Object, TResult extends Object>(
+    TInput? value,
+  ) {
     Object? newValue;
 
     for (final action in _actions) {
       if (action.isInstanceOf<RubikValidationAction>()) {
-        final hasError = action.execute(value) != null;
-        if (hasError) return null;
+        final error = action.execute(value);
+        if (error != null) return (result: null, error: error);
 
         continue;
       }
@@ -295,7 +325,7 @@ abstract class RubikValidatorType {
       newValue = (action as RubikTransformAction).execute(newValue ?? value);
     }
 
-    return newValue as TResult?;
+    return (result: newValue as TResult?, error: null);
   }
 
   /// Clears all actions from the validator.

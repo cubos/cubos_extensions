@@ -24,11 +24,11 @@ void main() {
         const Key columnKey = Key('column');
         const Key child0Key = Key('child0Key');
 
-        await tester.pumpWidget(Center(
+        await tester.pumpWidget(const Center(
           child: Column(
             key: columnKey,
             mainAxisSize: MainAxisSize.min,
-            children: const <Widget>[
+            children: <Widget>[
               SizedBox(width: 100.0, height: 100.0),
               VerticalSpacing(key: child0Key, 50.0),
               SizedBox(width: 100.0, height: 150.0),

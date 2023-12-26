@@ -41,15 +41,15 @@ void main() {
 
     test('should return transformad value', () {
       var schema = _TestValidation().required().types([String]);
-      expect(schema.parse(1), isNull);
+      expect(schema.parse(1).result, isNull);
 
       schema = schema.transform<String, List<int>>((e) {
         return e.toList(',').map((e) => int.parse(e)).toList();
       });
 
-      expect(schema.parse(1), isNull);
+      expect(schema.parse(1).result, isNull);
 
-      final parsed = schema.parse<String, List<int>>('1,2,3');
+      final parsed = schema.parse<String, List<int>>('1,2,3').result;
       expect(parsed, isNotNull);
       expect(parsed, isA<List<int>>());
       expect(parsed, [1, 2, 3]);

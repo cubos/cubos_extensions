@@ -361,6 +361,7 @@ extension RubikDurationExtensions on Duration {
   ///
   /// duration.toDateTime() // returns DateTime(2023, 03, 30, 15, 30)
   /// ```
+  /// {@end-tool}
   DateTime toDateTime([int? year, int? month, int? day]) {
     final now = DateTime.now();
 

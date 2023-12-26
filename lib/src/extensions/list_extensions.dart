@@ -219,6 +219,7 @@ extension RubikListExtensions<E> on List<E> {
   /// list.replace(1, 10, start: 1); // [10, 2, 3, 4, 5]
   /// list.replace(1, 10, start: 1, end: 3); // [10, 2, 3, 4, 5]
   /// ```
+  /// {@end-tool}
   void replace(E oldValue, E newValue, {int start = 0, int? end}) {
     if (isEmpty) return;
 
@@ -315,7 +316,7 @@ extension RubikListExtensions<E> on List<E> {
   /// final list = [1, 2, 3, 4, 5];
   /// list.average; // 3
   /// ```
-  ///
+  /// {@end-tool}
   double get average => isEmpty ? 0 : sum / length;
 
   /// Rotates the elements of the list `n` times to the left.

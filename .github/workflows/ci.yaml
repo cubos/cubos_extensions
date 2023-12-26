@@ -1,0 +1,62 @@
+name: Rubik Utils CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    if: ${{ always() }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2.10.0
+      
+      - name: Set up timezone
+        run: sudo ln -snf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && echo America/Sao_Paulo | sudo tee /etc/timezone
+      
+      - name: Setup coverage
+        run: sudo apt-get update -qq -y && sudo apt-get install -y lcov
+
+      - name: Run Test
+        run: flutter test --coverage test/rubik_utils_test.dart
+    
+      - name: Coverage
+        run: |
+            lcov --list coverage/lcov.info
+            lcov -r coverage/lcov.info '*/__test*__/*' -o coverage/lcov_cleaned.info
+            genhtml coverage/lcov_cleaned.info --output=coverage
+
+  publish:
+    needs: test
+    name: Publish
+    runs-on: ubuntu-latest
+    
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: subosito/flutter-action@v2.10.0
+
+    - run: echo "flutter pub publish -h"
+
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+
+    if: ${{ always() }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2.10.0
+     
+      - name: Run Analyze
+        run: flutter analyze
+        continue-on-error: true
+
+                   

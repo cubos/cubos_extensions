@@ -1,4 +1,4 @@
-/// The unit of time used in [RubikDuration].
+/// The unit of time used in `RubikDuration`.
 /// {@tool snippet}
 /// ```dart
 /// RubikTimeUnit.days // returns 'days'
