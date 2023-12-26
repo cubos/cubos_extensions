@@ -24,13 +24,13 @@ void main() {
         const Key rowKey = Key('row');
         const Key child0Key = Key('child0Key');
 
-        await tester.pumpWidget(Center(
+        await tester.pumpWidget(const Center(
           child: Row(
             key: rowKey,
             mainAxisSize: MainAxisSize.min,
             textDirection: TextDirection.ltr,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const <Widget>[
+            children: <Widget>[
               SizedBox(height: 20.0, width: 100.0),
               HorizontalSpacing(key: child0Key, 150.0),
               SizedBox(height: 20.0, width: 100.0),
