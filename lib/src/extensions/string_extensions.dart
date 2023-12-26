@@ -94,6 +94,7 @@ extension RubikStringExtensions on String {
   /// ```dart
   /// 'Flutter is awesome'.capitalize // returns 'Fluter is awesome'
   /// ```
+  /// {@end-tool}
   String get capitalize {
     if (length > 1) return '${this[0].toUpperCase()}${substring(1)}';
 
@@ -105,6 +106,7 @@ extension RubikStringExtensions on String {
   /// ```dart
   /// 'mr. john wick'.capitalizeWords // returns 'Mr. John Wick'
   /// ```
+  /// {@end-tool}
   String get capitalizeWords {
     if (isEmpty) return '';
 
@@ -119,6 +121,7 @@ extension RubikStringExtensions on String {
   /// ```dart
   /// 'John wick'.firstName // returns 'John'
   /// ```
+  /// {@end-tool}
   String get firstName {
     if (isEmpty) return this;
 
@@ -130,6 +133,7 @@ extension RubikStringExtensions on String {
   /// ```dart
   /// 'wick'.lastName // returns 'Wick'
   /// ```
+  /// {@end-tool}
   String get lastName {
     if (isEmpty) return this;
 
@@ -158,6 +162,7 @@ extension RubikStringExtensions on String {
   /// ```dart
   /// 'Marcos Vinicius Santos Fernandes'.socialName // returns 'Marcos Santos'
   /// ```
+  /// {@end-tool}
   String get socialName {
     if (isEmpty) return this;
 
@@ -255,7 +260,7 @@ extension RubikStringExtensions on String {
   }
 
   /// Converts `String` to int, return null if the String is in the wrong format;
-  /// /// {@tool snippet}
+  /// {@tool snippet}
   /// ```dart
   /// '10'.toInt // returns 10
   /// ```

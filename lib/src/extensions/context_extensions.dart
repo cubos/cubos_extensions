@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:rubik_utils/rubik_utils.dart';
+
 extension RubikThemeExtensions on BuildContext {
   /// Returns the `ThemeData` of context
   ThemeData get theme => Theme.of(this);
@@ -80,6 +82,34 @@ extension TextEditingControllerExtension on TextEditingController {
 
   /// Updates the `TextEditingController` with the given value
   void update(String value) => text = value;
+}
+
+extension PageControllerExtension on PageController {
+  /// Returns `true`, if the `PageController` is on the last page
+  bool get isOnFirstPage => pageIndex == 0;
+
+  /// Returns `true`, if the `PageController` is on the first page
+  bool isOnLastPage([int? length]) =>
+      pageIndex == (length ?? page?.roundToDouble());
+
+  /// Returns `page` of `PageController`
+  int get pageIndex => page?.toInt() ?? 0;
+
+  /// Navigates to the `next page`
+  void next({Duration? duration, Curve? curve}) {
+    nextPage(
+      curve: curve ?? Curves.linear,
+      duration: duration ?? 300.milliseconds,
+    );
+  }
+
+  /// Navigates to the `previous page`
+  void previous({Duration? duration, Curve? curve}) {
+    previousPage(
+      curve: curve ?? Curves.linear,
+      duration: duration ?? 300.milliseconds,
+    );
+  }
 }
 
 extension SizeExtension on Size {
