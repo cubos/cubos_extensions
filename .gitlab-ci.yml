@@ -1,0 +1,47 @@
+image: ghcr.io/cirruslabs/flutter:latest
+
+stages:
+  - test
+  - analyze 
+  - deploy
+
+Test:
+  stage: test
+  before_script:
+    - DEBIAN_FRONTEND=noninteractive apt-get update
+    - DEBIAN_FRONTEND=noninteractive apt-get install tzdata
+    - ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+  script:
+    - flutter clean && flutter pub get
+    - TZ="America/Bahia" && flutter test --coverage test/rubik_utils_test.dart
+    - lcov -r coverage/lcov.info '*/__test*__/*' -o coverage/lcov_cleaned.info
+    - genhtml coverage/lcov_cleaned.info --output=coverage
+  coverage: '/lines\.*:\s*(\d+.\d+)%/'
+  artifacts:
+    paths: 
+      - coverage
+
+Analyze:
+  stage: analyze
+  script:
+    - flutter analyze
+  allow_failure: true
+
+SonarQube:
+  stage: deploy
+  variables:
+    GIT_DEPTH: "0"
+    GIT_STRATEGY: clone
+  needs:
+    -  Test
+  script:
+    - |
+      curl -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+      unzip sonar-scanner-cli-4.8.0.2856-linux.zip
+      sonar-scanner-4.8.0.2856-linux/bin/sonar-scanner \
+        -Dsonar.projectKey=$CI_PROJECT_PATH_SLUG \
+        -Dsonar.qualitygate.wait=true \
+        -Dsonar.host.url=https://sonarqube.cubos.io \
+        -Dsonar.sources=lib
+  allow_failure: true
+  
