@@ -32,7 +32,7 @@ void main() {
 
       const message = 'invalid_minLength';
       expect(
-        RString().minLength(2, message: message).validate('test'),
+        RString().minLength(4, message: message).validate('abc'),
         message,
       );
     });
@@ -394,15 +394,24 @@ void main() {
       expect(RString().repetition(message: message).validate('11'), message);
     });
 
-//   test('RString.confirmPassword', () {
-//     expect(RString.confirmPassword('', ''), isString);
-//     expect(RString.confirmPassword(' ', ''), isString);
-//     expect(RString.confirmPassword('', null), isString);
+    test('RString.confirmPassword', () {
+      final schema =
+          RString().minLength(3).maxLength(6).specialCharacters(1).digits(1);
 
-//     expect(RString.confirmPassword('10', '10'), isNull);
-//     expect(RString.confirmPassword('hello', 'hello'), isNull);
-//     expect(RString.confirmPassword('Senha2132', 'Senha2132'), isNull);
-//   });
+      expect(RString().confirmPassword('', schema).validate(''), isString);
+      expect(RString().confirmPassword('', schema).validate(null), isString);
+      expect(RString().confirmPassword('ab', schema).validate('ab'), isString);
+
+      expect(
+        RString().confirmPassword('ab1de@', schema).validate('abc'),
+        isString,
+      );
+
+      expect(
+        RString().confirmPassword('ab1de@', schema).validate('ab1de@'),
+        isNull,
+      );
+    });
   });
 
   group('RubikStringRString.transforms', () {

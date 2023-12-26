@@ -46,6 +46,7 @@ class RubikStringNames {
   /// final name = RubikStringNames('', shortName: 'package');
   /// name.shortNameOrFullName; // returns 'package'
   /// ```
+  /// {@end-tool}
   String get shortNameOrFullName => shortName.isEmpty ? fullName : shortName;
 
   /// Retuns full name and short name separated by a space.
